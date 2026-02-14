@@ -3,59 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Milk & Mocha: Bear ❤️ Panda Quest</title>
+    <title>Milk & Mocha Quest</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@700&family=Dancing+Script:wght@700&display=swap');
         
-        /* Critical Mobile Fixes */
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: none; user-select: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff1f2; font-family: 'Quicksand', sans-serif; position: fixed; }
         
-        #game-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background: #000; /* Black bars if aspect ratio differs */
+            font-family: 'Quicksand', sans-serif; position: fixed; 
+        }
+        
+        #game-container { 
+            position: relative; width: 100vw; height: 100vh; 
+            display: flex; justify-content: center; align-items: center;
+            background: #fff1f2;
+        }
 
         /* Screen Overlays */
         .screen {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; text-align: center; padding: 20px;
+            z-index: 100; text-align: center; padding: env(safe-area-inset-top) env(safe-area-inset-right);
         }
         #intro-screen { background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); z-index: 120; }
         #game-over-screen { background: #fdf2f7; display: none; z-index: 140; }
         #victory-screen { background: #fffafa; display: none; z-index: 130; }
 
         .gif-container {
-            width: 220px; max-height: 220px; margin-bottom: 15px; border-radius: 20px; 
-            overflow: hidden; border: 6px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            width: 200px; border-radius: 15px; overflow: hidden; 
+            border: 5px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
         }
 
-        /* The Heart Start Button */
         .heart-btn {
-            background: #ff4d6d; width: 130px; height: 110px; border: none; cursor: pointer;
-            clip-path: path('M65 105s-55-32-55-70c0-25 18-30 28-30 15 0 27 15 27 15s12-15 27-15c10 0 28 5 28 30 0 38-55 70-55 70z');
+            background: #ff4d6d; width: 120px; height: 100px; border: none; cursor: pointer;
+            clip-path: path('M60 95s-50-30-50-65c0-25 15-30 25-30 15 0 25 15 25 15s10-15 25-15c10 0 25 5 25 30 0 35-50 65-50 65z');
             color: white; font-family: 'Fredoka One'; font-size: 16px; 
             display: flex; align-items: center; justify-content: center;
-            padding-bottom: 20px; transition: 0.3s;
+            padding-bottom: 20px;
         }
 
-        /* Mobile Controls - Visual Fix */
+        /* Motorola G64 Optimized Controls */
         #mobile-controls {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 140px;
-            display: none; align-items: flex-end; justify-content: space-between;
-            padding: 0 40px 30px 40px; z-index: 150; pointer-events: none;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            display: none; z-index: 150; pointer-events: none;
         }
-        .control-group { display: flex; gap: 20px; pointer-events: auto; }
+        .btn-left { position: absolute; bottom: 15%; left: 8%; pointer-events: auto; }
+        .btn-right { position: absolute; bottom: 15%; left: 22%; pointer-events: auto; }
+        .btn-jump { position: absolute; bottom: 15%; right: 10%; pointer-events: auto; }
+
         .control-btn {
-            width: 75px; height: 75px; background: rgba(255, 255, 255, 0.7);
-            border: 4px solid #ff4d6d; border-radius: 50%;
+            width: 75px; height: 75px; background: rgba(255, 255, 255, 0.4);
+            border: 3px solid #ff4d6d; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 32px; color: #ff4d6d; font-weight: bold;
-            box-shadow: 0 5px 0px rgba(255, 77, 109, 0.4);
+            font-size: 30px; color: #ff4d6d; font-weight: bold;
         }
-        .control-btn:active { transform: translateY(4px); box-shadow: none; background: white; }
 
-        canvas { background: linear-gradient(#bae6fd, #fdf2f7); display: none; width: 100%; height: 100%; }
+        /* The Canvas should maintain its internal ratio */
+        canvas { 
+            display: none; 
+            max-width: 100%; max-height: 100%; 
+            object-fit: contain; 
+            background: linear-gradient(#bae6fd, #fdf2f7);
+        }
 
-        /* Orientation Logic */
         #landscape-warning {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ff4d6d; color: white; z-index: 1000;
@@ -67,13 +80,13 @@
 <body>
 
 <div id="landscape-warning">
-    <div style="font-size: 50px; animation: rotate 2s infinite;">🔄</div>
+    <div style="font-size: 50px;">🔄</div>
     <h2 style="font-family:'Fredoka One'">Rotate Phone to Play!</h2>
 </div>
 
 <div id="game-container">
     <div id="intro-screen" class="screen">
-        <h1 style="font-family:'Fredoka One'; color:white; text-shadow:2px 2px 0 #ff4d6d; font-size:2rem; margin-bottom:20px;">Bear & Panda Quest</h1>
+        <h1 style="font-family:'Fredoka One'; color:white; text-shadow:2px 2px 0 #ff4d6d; font-size:2rem; margin-bottom:10px;">Bear & Panda Quest</h1>
         <div class="gif-container">
             <div class="tenor-gif-embed" data-postid="1407182070087662632" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/ily-milo-milo-i-love-you-i-love-you-so-much-i-love-you-very-much-gif-1407182070087662632">Ily Milo GIF</a></div>
             <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
@@ -82,7 +95,7 @@
     </div>
 
     <div id="game-over-screen" class="screen">
-        <div class="gif-container" style="width: 160px;">
+        <div class="gif-container" style="width: 140px;">
             <div class="tenor-gif-embed" data-postid="27491908" data-share-method="host" data-aspect-ratio="0.5625" data-width="100%"><a href="https://tenor.com/view/milk-and-mocha-milk-mocha-bear-love-love-you-gif-27491908">Milk And Mocha GIF</a></div>
             <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
         </div>
@@ -90,22 +103,18 @@
     </div>
 
     <div id="victory-screen" class="screen">
-        <div class="gif-container" style="width:260px;">
+        <div class="gif-container" style="width:240px;">
             <div class="tenor-gif-embed" data-postid="20721043" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/cheriuzzina-gif-20721043">Cheriuzzina Sticker</a></div>
             <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
         </div>
-        <div style="font-family:'Dancing Script'; color:#ff4d6d; font-size:1.8rem; padding:10px;">I love you chotuuuuu, Happy Valentines Day my sunflower! 🌻💖</div>
+        <div style="font-family:'Dancing Script'; color:#ff4d6d; font-size:1.6rem;">I love you chotuuuuu, Happy Valentines Day my sunflower! 🌻💖</div>
         <button class="heart-btn" onclick="location.reload()">AGAIN</button>
     </div>
 
     <div id="mobile-controls">
-        <div class="control-group">
-            <div class="control-btn" id="lBtn">←</div>
-            <div class="control-btn" id="rBtn">→</div>
-        </div>
-        <div class="control-group">
-            <div class="control-btn" id="jBtn">↑</div>
-        </div>
+        <div class="control-btn btn-left" id="lBtn">←</div>
+        <div class="control-btn btn-right" id="rBtn">→</div>
+        <div class="control-btn btn-jump" id="jBtn">↑</div>
     </div>
     <canvas id="gameCanvas"></canvas>
 </div>
@@ -115,10 +124,9 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const controls = document.getElementById('mobile-controls');
 
-// Logic Settings
 const GRAVITY = 0.5;
 const WORLD_WIDTH = 4000;
-const V_HEIGHT = 600; // Logical height for all devices
+const V_HEIGHT = 600; 
 let gameActive = false;
 let gameFrame = 0;
 let cameraX = 0;
@@ -135,15 +143,12 @@ const platforms = [
 const hearts = [{x: 1300, y: 350}, {x: 1800, y: 240}, {x: 2300, y: 370}, {x: 2750, y: 270}, {x: 3200, y: 400}].map(h => ({...h, collected: false}));
 const wolves = [{x: 1400, y: 375, startX: 1400, range: 120, dir: 1}, {x: 2200, y: 405, startX: 2200, range: 160, dir: 1}, {x: 3100, y: 435, startX: 3100, range: 200, dir: 1}];
 
-// Input State
 const keys = {};
 const touch = { l: false, r: false };
 
-// Desktop Input
 window.addEventListener('keydown', e => { keys[e.code] = true; if(e.code==='Space'||e.code==='ArrowUp') jump(); });
 window.addEventListener('keyup', e => keys[e.code] = false);
 
-// Mobile Input - Multi-touch Fixed
 function setupBtn(id, act) {
     const b = document.getElementById(id);
     b.addEventListener('touchstart', (e) => { e.preventDefault(); if(act==='j') jump(); else touch[act]=true; }, {passive: false});
@@ -165,13 +170,11 @@ function drawHeart(x, y) {
 function drawBear(x, y) {
     ctx.fillStyle = '#b19688'; ctx.beginPath(); ctx.roundRect(x, y, 60, 55, 20); ctx.fill();
     ctx.beginPath(); ctx.arc(x+10, y+5, 14, 0, 7); ctx.arc(x+50, y+5, 14, 0, 7); ctx.fill();
-    ctx.fillStyle = '#3e2723'; ctx.beginPath(); ctx.arc(x+22, y+25, 3.5, 0, 7); ctx.arc(x+38, y+25, 3.5, 0, 7); ctx.fill();
 }
 
 function drawPanda(x, y) {
     ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(x, y, 70, 65, 25); ctx.fill();
     ctx.fillStyle = '#2d2d2d'; ctx.beginPath(); ctx.arc(x+15, y+5, 16, 0, 7); ctx.arc(x+55, y+5, 16, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(x+25, y+30, 12, 14, 0.2, 0, 7); ctx.ellipse(x+45, y+30, 12, 14, -0.2, 0, 7); ctx.fill();
 }
 
 function drawWolf(x, y) {
@@ -179,63 +182,41 @@ function drawWolf(x, y) {
     ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(x+15, y+18, 3, 0, 7); ctx.arc(x+35, y+18, 3, 0, 7); ctx.fill();
 }
 
-function startGame() {
-    document.getElementById('intro-screen').style.display = 'none';
-    canvas.style.display = 'block';
-    if('ontouchstart' in window || window.innerWidth < 1024) controls.style.display = 'flex';
-    resize();
-    gameActive = true; loop();
-}
-
 function resize() {
     const scale = window.innerHeight / V_HEIGHT;
     canvas.height = V_HEIGHT;
     canvas.width = window.innerWidth / scale;
-    ctx.resetTransform();
 }
 window.addEventListener('resize', resize);
+
+function startGame() {
+    document.getElementById('intro-screen').style.display = 'none';
+    canvas.style.display = 'block';
+    if(window.innerWidth < 1024) controls.style.display = 'block';
+    resize();
+    gameActive = true; loop();
+}
 
 function loop() {
     if (!gameActive) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height); gameFrame++;
-    
-    // Smooth Camera
-    cameraX = bear.x - canvas.width / 3;
-    if (cameraX < 0) cameraX = 0;
-    
-    ctx.save();
-    ctx.translate(-cameraX, 0);
-    
-    // World
+    cameraX = bear.x - canvas.width / 3; if (cameraX < 0) cameraX = 0;
+    ctx.save(); ctx.translate(-cameraX, 0);
     ctx.fillStyle = '#a5d6a7'; platforms.forEach(p => ctx.fillRect(p.x, p.y, p.w, p.h));
     hearts.forEach(h => { if (!h.collected) { drawHeart(h.x, h.y); if (Math.hypot(bear.x+30-h.x, bear.y+25-h.y) < 55) h.collected = true; } });
     wolves.forEach(w => {
         w.x += w.dir * 1.8; if (Math.abs(w.x-w.startX) > w.range) w.dir *= -1;
-        drawWolf(w.x, w.y); if (Math.hypot(bear.x+30-(w.x+25), bear.y+25-(w.y+20)) < 45) die();
+        drawWolf(w.x, w.y); if (Math.hypot(bear.x+30-(w.x+25), bear.y+25-(w.y+20)) < 45) end('game-over-screen');
     });
-
-    // Physics & Movement
     if (keys['ArrowRight'] || keys['KeyD'] || touch.r) bear.x += bear.speed;
     if (keys['ArrowLeft'] || keys['KeyA'] || touch.l) bear.x -= bear.speed;
-    
     bear.dy += GRAVITY; bear.y += bear.dy;
-    
-    // Collision Logic
-    platforms.forEach(p => {
-        if (bear.x + 50 > p.x && bear.x < p.x + p.w && bear.y + 55 > p.y && bear.y + 55 < p.y + p.h + 20 && bear.dy >= 0) {
-            bear.y = p.y - 55; bear.dy = 0; bear.jCount = 0;
-        }
-    });
-
-    if (bear.y > V_HEIGHT + 100) die();
-    if (bear.x > panda.x - 30) { gameActive = false; controls.style.display='none'; document.getElementById('victory-screen').style.display='flex'; }
-
-    drawPanda(panda.x, panda.y); drawBear(bear.x, bear.y);
-    ctx.restore();
-    requestAnimationFrame(loop);
+    platforms.forEach(p => { if (bear.x+45 > p.x && bear.x < p.x+p.w && bear.y+55 > p.y && bear.y+55 < p.y+p.h+20 && bear.dy >= 0) { bear.y = p.y-55; bear.dy = 0; bear.jCount = 0; } });
+    if (bear.y > V_HEIGHT) end('game-over-screen');
+    if (bear.x > panda.x - 30) end('victory-screen');
+    drawPanda(panda.x, panda.y); drawBear(bear.x, bear.y); ctx.restore(); requestAnimationFrame(loop);
 }
-
-function die() { gameActive = false; controls.style.display='none'; document.getElementById('game-over-screen').style.display='flex'; }
+function end(id) { gameActive = false; canvas.style.display='none'; controls.style.display='none'; document.getElementById(id).style.display='flex'; }
 </script>
 </body>
 </html>
