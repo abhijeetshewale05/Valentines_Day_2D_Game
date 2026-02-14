@@ -11,7 +11,7 @@
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
-            overflow: hidden; background: #000; /* Black bars if aspect ratio differs */
+            overflow: hidden; background: #000;
             font-family: 'Quicksand', sans-serif; position: fixed; 
         }
         
@@ -25,49 +25,45 @@
         .screen {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; text-align: center; padding: env(safe-area-inset-top) env(safe-area-inset-right);
+            z-index: 100; text-align: center; padding: 20px;
         }
         #intro-screen { background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); z-index: 120; }
         #game-over-screen { background: #fdf2f7; display: none; z-index: 140; }
         #victory-screen { background: #fffafa; display: none; z-index: 130; }
 
         .gif-container {
-            width: 200px; border-radius: 15px; overflow: hidden; 
-            border: 5px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
+            width: 220px; border-radius: 20px; overflow: hidden; 
+            border: 6px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
         }
 
         .heart-btn {
-            background: #ff4d6d; width: 120px; height: 100px; border: none; cursor: pointer;
-            clip-path: path('M60 95s-50-30-50-65c0-25 15-30 25-30 15 0 25 15 25 15s10-15 25-15c10 0 25 5 25 30 0 35-50 65-50 65z');
-            color: white; font-family: 'Fredoka One'; font-size: 16px; 
+            background: #ff4d6d; width: 130px; height: 110px; border: none; cursor: pointer;
+            clip-path: path('M65 105s-55-32-55-70c0-25 18-30 28-30 15 0 27 15 27 15s12-15 27-15c10 0 28 5 28 30 0 38-55 70-55 70z');
+            color: white; font-family: 'Fredoka One'; font-size: 18px; 
             display: flex; align-items: center; justify-content: center;
-            padding-bottom: 20px;
+            padding-bottom: 25px; transition: 0.3s;
         }
 
-        /* Motorola G64 Optimized Controls */
+        /* Mobile Controls - Positioned for Motorola G64 Landscape */
         #mobile-controls {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
             display: none; z-index: 150; pointer-events: none;
         }
-        .btn-left { position: absolute; bottom: 15%; left: 8%; pointer-events: auto; }
-        .btn-right { position: absolute; bottom: 15%; left: 22%; pointer-events: auto; }
-        .btn-jump { position: absolute; bottom: 15%; right: 10%; pointer-events: auto; }
+        .btn-l { position: absolute; bottom: 12%; left: 8%; pointer-events: auto; }
+        .btn-r { position: absolute; bottom: 12%; left: 22%; pointer-events: auto; }
+        .btn-j { position: absolute; bottom: 12%; right: 10%; pointer-events: auto; }
 
         .control-btn {
-            width: 75px; height: 75px; background: rgba(255, 255, 255, 0.4);
-            border: 3px solid #ff4d6d; border-radius: 50%;
+            width: 80px; height: 80px; background: rgba(255, 255, 255, 0.45);
+            border: 4px solid #ff4d6d; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 30px; color: #ff4d6d; font-weight: bold;
+            font-size: 35px; color: #ff4d6d; font-weight: bold;
+            box-shadow: 0 5px 0px rgba(255, 77, 109, 0.3);
         }
+        .control-btn:active { transform: translateY(4px); box-shadow: none; background: white; }
 
-        /* The Canvas should maintain its internal ratio */
-        canvas { 
-            display: none; 
-            max-width: 100%; max-height: 100%; 
-            object-fit: contain; 
-            background: linear-gradient(#bae6fd, #fdf2f7);
-        }
+        canvas { display: none; max-width: 100%; max-height: 100%; object-fit: contain; }
 
         #landscape-warning {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -81,12 +77,12 @@
 
 <div id="landscape-warning">
     <div style="font-size: 50px;">🔄</div>
-    <h2 style="font-family:'Fredoka One'">Rotate Phone to Play!</h2>
+    <h2 style="font-family:'Fredoka One'">Please Rotate Phone!</h2>
 </div>
 
 <div id="game-container">
     <div id="intro-screen" class="screen">
-        <h1 style="font-family:'Fredoka One'; color:white; text-shadow:2px 2px 0 #ff4d6d; font-size:2rem; margin-bottom:10px;">Bear & Panda Quest</h1>
+        <h1 style="font-family:'Fredoka One'; color:white; text-shadow:3px 3px 0 #ff4d6d; font-size:2.5rem; margin-bottom:15px;">Bear & Panda Quest</h1>
         <div class="gif-container">
             <div class="tenor-gif-embed" data-postid="1407182070087662632" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/ily-milo-milo-i-love-you-i-love-you-so-much-i-love-you-very-much-gif-1407182070087662632">Ily Milo GIF</a></div>
             <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
@@ -95,7 +91,8 @@
     </div>
 
     <div id="game-over-screen" class="screen">
-        <div class="gif-container" style="width: 140px;">
+        <div style="font-family:'Fredoka One'; color:#ff4d6d; font-size:1.8rem; margin-bottom:15px;">Oh no! Don't let go... 🥺</div>
+        <div class="gif-container" style="width: 160px;">
             <div class="tenor-gif-embed" data-postid="27491908" data-share-method="host" data-aspect-ratio="0.5625" data-width="100%"><a href="https://tenor.com/view/milk-and-mocha-milk-mocha-bear-love-love-you-gif-27491908">Milk And Mocha GIF</a></div>
             <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
         </div>
@@ -103,18 +100,18 @@
     </div>
 
     <div id="victory-screen" class="screen">
-        <div class="gif-container" style="width:240px;">
+        <div class="gif-container" style="width:280px;">
             <div class="tenor-gif-embed" data-postid="20721043" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/cheriuzzina-gif-20721043">Cheriuzzina Sticker</a></div>
             <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
         </div>
-        <div style="font-family:'Dancing Script'; color:#ff4d6d; font-size:1.6rem;">I love you chotuuuuu, Happy Valentines Day my sunflower! 🌻💖</div>
+        <div style="font-family:'Dancing Script'; color:#ff4d6d; font-size:2rem; padding:10px;">I love you chotuuuuu, Happy Valentines Day my sunflower! 🌻💖</div>
         <button class="heart-btn" onclick="location.reload()">AGAIN</button>
     </div>
 
     <div id="mobile-controls">
-        <div class="control-btn btn-left" id="lBtn">←</div>
-        <div class="control-btn btn-right" id="rBtn">→</div>
-        <div class="control-btn btn-jump" id="jBtn">↑</div>
+        <div class="control-btn btn-l" id="lBtn">←</div>
+        <div class="control-btn btn-r" id="rBtn">→</div>
+        <div class="control-btn btn-j" id="jBtn">↑</div>
     </div>
     <canvas id="gameCanvas"></canvas>
 </div>
@@ -127,11 +124,9 @@ const controls = document.getElementById('mobile-controls');
 const GRAVITY = 0.5;
 const WORLD_WIDTH = 4000;
 const V_HEIGHT = 600; 
-let gameActive = false;
-let gameFrame = 0;
-let cameraX = 0;
+let gameActive = false, gameFrame = 0, cameraX = 0;
 
-const bear = { x: 250, y: 400, w: 60, h: 55, dy: 0, jCount: 0, speed: 8 };
+const bear = { x: 250, y: 400, w: 60, h: 55, dy: 0, jCount: 0, speed: 7.5 };
 const panda = { x: 3750, y: 440, w: 70, h: 65 };
 
 const platforms = [
@@ -156,7 +151,7 @@ function setupBtn(id, act) {
 }
 setupBtn('lBtn', 'l'); setupBtn('rBtn', 'r'); setupBtn('jBtn', 'j');
 
-function jump() { if(bear.jCount < 2 && gameActive) { bear.dy = -14; bear.jCount++; } }
+function jump() { if(bear.jCount < 2 && gameActive) { bear.dy = -13.5; bear.jCount++; } }
 
 function drawHeart(x, y) {
     const b = Math.sin(gameFrame * 0.05) * 5;
@@ -170,22 +165,25 @@ function drawHeart(x, y) {
 function drawBear(x, y) {
     ctx.fillStyle = '#b19688'; ctx.beginPath(); ctx.roundRect(x, y, 60, 55, 20); ctx.fill();
     ctx.beginPath(); ctx.arc(x+10, y+5, 14, 0, 7); ctx.arc(x+50, y+5, 14, 0, 7); ctx.fill();
+    ctx.fillStyle = '#ffcdd2'; ctx.beginPath(); ctx.arc(x+12, y+35, 8, 0, 7); ctx.arc(x+48, y+35, 8, 0, 7); ctx.fill();
+    ctx.fillStyle = '#3e2723'; ctx.beginPath(); ctx.arc(x+22, y+25, 3.5, 0, 7); ctx.arc(x+38, y+25, 3.5, 0, 7); ctx.fill();
 }
 
 function drawPanda(x, y) {
     ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(x, y, 70, 65, 25); ctx.fill();
     ctx.fillStyle = '#2d2d2d'; ctx.beginPath(); ctx.arc(x+15, y+5, 16, 0, 7); ctx.arc(x+55, y+5, 16, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+25, y+30, 12, 14, 0.2, 0, 7); ctx.ellipse(x+45, y+30, 12, 14, -0.2, 0, 7); ctx.fill();
+    ctx.fillStyle = '#f8bbd0'; ctx.beginPath(); ctx.arc(x+12, y+45, 8, 0, 7); ctx.arc(x+58, y+45, 8, 0, 7); ctx.fill();
 }
 
 function drawWolf(x, y) {
-    ctx.fillStyle = '#78909c'; ctx.beginPath(); ctx.roundRect(x, y, 50, 40, 15); ctx.fill();
-    ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(x+15, y+18, 3, 0, 7); ctx.arc(x+35, y+18, 3, 0, 7); ctx.fill();
+    ctx.fillStyle = '#78909c'; ctx.beginPath(); ctx.roundRect(x, y, 55, 45, 15); ctx.fill();
+    ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(x+18, y+20, 3, 0, 7); ctx.arc(x+38, y+20, 3, 0, 7); ctx.fill();
 }
 
 function resize() {
     const scale = window.innerHeight / V_HEIGHT;
-    canvas.height = V_HEIGHT;
-    canvas.width = window.innerWidth / scale;
+    canvas.height = V_HEIGHT; canvas.width = window.innerWidth / scale;
 }
 window.addEventListener('resize', resize);
 
@@ -193,8 +191,7 @@ function startGame() {
     document.getElementById('intro-screen').style.display = 'none';
     canvas.style.display = 'block';
     if(window.innerWidth < 1024) controls.style.display = 'block';
-    resize();
-    gameActive = true; loop();
+    resize(); gameActive = true; loop();
 }
 
 function loop() {
@@ -206,7 +203,7 @@ function loop() {
     hearts.forEach(h => { if (!h.collected) { drawHeart(h.x, h.y); if (Math.hypot(bear.x+30-h.x, bear.y+25-h.y) < 55) h.collected = true; } });
     wolves.forEach(w => {
         w.x += w.dir * 1.8; if (Math.abs(w.x-w.startX) > w.range) w.dir *= -1;
-        drawWolf(w.x, w.y); if (Math.hypot(bear.x+30-(w.x+25), bear.y+25-(w.y+20)) < 45) end('game-over-screen');
+        drawWolf(w.x, w.y); if (Math.hypot(bear.x+30-(w.x+27), bear.y+25-(w.y+22)) < 48) end('game-over-screen');
     });
     if (keys['ArrowRight'] || keys['KeyD'] || touch.r) bear.x += bear.speed;
     if (keys['ArrowLeft'] || keys['KeyA'] || touch.l) bear.x -= bear.speed;
