@@ -21,34 +21,37 @@
             background: #fff1f2;
         }
 
-        /* UI Screens - Strictly anchored to top for Chrome Mobile compatibility */
+        /* Side-by-Side Layout for Mobile Horizontal */
         .screen {
             position: absolute; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            z-index: 100; text-align: center; 
-            padding-top: 5vh; 
+            display: flex; flex-direction: row; /* Buttons on the right */
+            align-items: center; justify-content: center;
+            z-index: 100; text-align: center; padding: 20px;
+            gap: 30px;
         }
         
         #intro-screen { background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); z-index: 120; }
         #game-over-screen { background: #fdf2f7; display: none; z-index: 140; }
-        #victory-screen { background: #fffafa; display: none; z-index: 130; }
+        #victory-screen { background: #fffafa; display: none; z-index: 130; flex-direction: column; } /* Victory stays column for the long message */
 
+        .content-box { display: flex; flex-direction: column; align-items: center; }
+        
         .gif-container {
-            width: 150px; 
+            width: 160px; 
             border-radius: 12px; overflow: hidden; 
             border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom: 5px;
         }
 
         .heart-btn {
-            background: #ff4d6d; width: 100px; height: 85px; border: none; cursor: pointer;
-            clip-path: path('M50 75s-40-25-40-55c0-20 12-25 22-25 10 0 18 10 18 10s8-10 18-10c10 0 22 5 22 25 0 30-40 55-40 55z');
-            color: white; font-family: 'Fredoka One'; font-size: 13px; 
+            background: #ff4d6d; width: 110px; height: 95px; border: none; cursor: pointer;
+            clip-path: path('M55 85s-45-28-45-60c0-22 15-28 22-28 12 0 23 12 23 12s10-12 23-12c10 0 22 5 22 28 0 32-45 60-45 60z');
+            color: white; font-family: 'Fredoka One'; font-size: 14px; 
             display: flex; align-items: center; justify-content: center;
-            padding-bottom: 15px; margin-top: 5px;
+            padding-bottom: 20px; transition: 0.3s;
         }
+        .heart-btn:active { transform: scale(0.9); }
 
-        /* Controls set to 30% from bottom */
+        /* Controls anchored at 30% from bottom */
         #mobile-controls {
             position: absolute; bottom: 30%; 
             left: 0; width: 100%; height: 80px;
@@ -65,11 +68,7 @@
             font-size: 28px; color: #ff4d6d; font-weight: bold;
         }
 
-        canvas { 
-            display: none; 
-            max-width: 100%; max-height: 100%; 
-            object-fit: contain; 
-        }
+        canvas { display: none; max-width: 100%; max-height: 100%; object-fit: contain; }
 
         #landscape-warning {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -88,19 +87,23 @@
 
 <div id="game-container">
     <div id="intro-screen" class="screen">
-        <h1 style="font-family:'Fredoka One'; color:white; text-shadow:2px 2px 0 #ff4d6d; font-size:1.5rem;">Bear & Panda Quest</h1>
-        <div class="gif-container">
-            <div class="tenor-gif-embed" data-postid="1407182070087662632" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/ily-milo-milo-i-love-you-i-love-you-so-much-i-love-you-very-much-gif-1407182070087662632">Ily Milo GIF</a></div>
-            <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+        <div class="content-box">
+            <h1 style="font-family:'Fredoka One'; color:white; text-shadow:2px 2px 0 #ff4d6d; font-size:1.5rem; margin-bottom:10px;">Bear & Panda Quest</h1>
+            <div class="gif-container">
+                <div class="tenor-gif-embed" data-postid="1407182070087662632" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/ily-milo-milo-i-love-you-i-love-you-so-much-i-love-you-very-much-gif-1407182070087662632">Ily Milo GIF</a></div>
+                <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+            </div>
         </div>
         <button class="heart-btn" onclick="startGame()">START</button>
     </div>
 
     <div id="game-over-screen" class="screen">
-        <div style="font-family:'Fredoka One'; color:#ff4d6d; font-size:1.3rem;">Don't let go... 🥺</div>
-        <div class="gif-container" style="width: 110px;">
-            <div class="tenor-gif-embed" data-postid="27491908" data-share-method="host" data-aspect-ratio="0.5625" data-width="100%"><a href="https://tenor.com/view/milk-and-mocha-milk-mocha-bear-love-love-you-gif-27491908">Milk And Mocha GIF</a></div>
-            <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+        <div class="content-box">
+            <div style="font-family:'Fredoka One'; color:#ff4d6d; font-size:1.3rem; margin-bottom:10px;">Don't let go... 🥺</div>
+            <div class="gif-container" style="width: 110px;">
+                <div class="tenor-gif-embed" data-postid="27491908" data-share-method="host" data-aspect-ratio="0.5625" data-width="100%"><a href="https://tenor.com/view/milk-and-mocha-milk-mocha-bear-love-love-you-gif-27491908">Milk And Mocha GIF</a></div>
+                <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+            </div>
         </div>
         <button class="heart-btn" onclick="location.reload()">RETRY</button>
     </div>
@@ -111,7 +114,7 @@
             <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
         </div>
         <div style="font-family:'Dancing Script'; color:#ff4d6d; font-size:1.3rem; padding: 5px 15px;">I love you chotuuuuu, Happy Valentines Day my sunflower! 🌻💖</div>
-        <button class="heart-btn" onclick="location.reload()">AGAIN</button>
+        <button class="heart-btn" onclick="location.reload()" style="margin-top:10px;">AGAIN</button>
     </div>
 
     <div id="mobile-controls">
@@ -194,8 +197,7 @@ function resize() {
 window.addEventListener('resize', resize);
 
 function startGame() {
-    // FORCE RESIZE IMMEDIATELY
-    resize();
+    resize(); // Trigger scaling immediately
     document.getElementById('intro-screen').style.display = 'none';
     canvas.style.display = 'block';
     if(window.innerWidth < 1024) controls.style.display = 'block';
