@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Milk & Mocha Quest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@700&family=Dancing+Script:wght@700&display=swap');
+        
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff1f2; font-family: 'Quicksand', sans-serif; }
+        
+        #game-container { position: relative; width: 100vw; height: 100vh; }
+
+        .screen {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; text-align: center; padding: 20px;
+        }
+
+        /* Intro Screen */
+        #intro-screen { background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); z-index: 120; }
+
+        /* Game Over Screen */
+        #game-over-screen { background: #fdf2f7; display: none; z-index: 140; }
+        
+        /* Victory Screen */
+        #victory-screen { background: #fffafa; display: none; z-index: 130; padding-bottom: 50px; }
+
+        .gif-container {
+            width: 240px; margin-bottom: 15px; border-radius: 20px; 
+            overflow: hidden; border: 6px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .romantic-text {
+            font-family: 'Dancing Script', cursive; color: #ff4d6d;
+            font-size: 2rem; line-height: 1.3; padding: 0 20px; margin-bottom: 25px;
+        }
+
+        .heart-btn {
+            background: #ff4d6d; width: 140px; height: 120px; border: none; cursor: pointer;
+            clip-path: path('M70 115s-60-35-60-75c0-30 22-35 32-35 18 0 33 18 33 18s15-18 33-18c10 0 32 5 32 35 0 42-60 75-60 75z');
+            color: white; font-family: 'Fredoka One'; font-size: 18px; 
+            display: flex; align-items: center; justify-content: center;
+            padding-bottom: 20px; transition: 0.3s;
+        }
+        .heart-btn:hover { transform: scale(1.1); background: #ff758f; }
+
+        /* Mobile Controls */
+        #mobile-controls {
+            position: absolute; bottom: 30px; width: 100%;
+            display: none; justify-content: space-between; padding: 0 30px;
+            z-index: 50; pointer-events: none;
+        }
+        .control-btn {
+            width: 70px; height: 70px; background: rgba(255, 255, 255, 0.7);
+            border: 3px solid #ff4d6d; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: #ff4d6d; pointer-events: auto;
+        }
+
+        canvas { background: linear-gradient(#bae6fd, #fdf2f7); display: none; width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="intro-screen" class="screen">
+        <h1 style="font-family:'Fredoka One'; color:white; text-shadow:3px 3px 0 #ff4d6d; font-size:2.5rem; margin-bottom:20px;">Bear & Panda Quest</h1>
+        <div class="gif-container">
+            <div class="tenor-gif-embed" data-postid="1407182070087662632" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/ily-milo-milo-i-love-you-i-love-you-so-much-i-love-you-very-much-gif-1407182070087662632">Ily Milo GIF</a></div>
+            <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+        </div>
+        <button class="heart-btn" onclick="startGame()">START</button>
+    </div>
+
+    <div id="game-over-screen" class="screen">
+        <div style="font-family:'Fredoka One'; color:#ff4d6d; font-size:1.8rem; margin-bottom:15px;">Oh no! Don't let go... 🥺</div>
+        <div class="gif-container" style="width: 160px;">
+            <div class="tenor-gif-embed" data-postid="27491908" data-share-method="host" data-aspect-ratio="0.5625" data-width="100%"><a href="https://tenor.com/view/milk-and-mocha-milk-mocha-bear-love-love-you-gif-27491908">Milk And Mocha GIF</a></div>
+            <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+        </div>
+        <div style="color:#ff4d6d; font-weight:bold; margin-bottom:20px;">Try again for your sunflower? 🌻</div>
+        <button class="heart-btn" onclick="location.reload()">RETRY</button>
+    </div>
+
+    <div id="victory-screen" class="screen">
+        <div class="gif-container" style="width:280px;">
+            <div class="tenor-gif-embed" data-postid="20721043" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/cheriuzzina-gif-20721043">Cheriuzzina Sticker</a></div>
+            <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+        </div>
+        <div class="romantic-text">
+            I love you chotuuuuu, <br>
+            Happy Valentines Day my sunflower! 🌻💖✨
+        </div>
+        <button class="heart-btn" onclick="location.reload()">AGAIN</button>
+    </div>
+
+    <div id="mobile-controls">
+        <div style="display:flex; gap:15px;">
+            <div class="control-btn" id="leftBtn">←</div>
+            <div class="control-btn" id="rightBtn">→</div>
+        </div>
+        <div class="control-btn" id="jumpBtn">↑</div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const mobileControls = document.getElementById('mobile-controls');
+
+const GRAVITY = 0.5;
+const WORLD_WIDTH = 4000;
+let cameraX = 0;
+let gameActive = false;
+let gameFrame = 0;
+
+const bear = { x: 150, y: 400, w: 60, h: 55, dy: 0, jumpCount: 0, speed: 7 };
+const panda = { x: 3700, y: 440, w: 70, h: 65 };
+
+const platforms = [
+    {x: 0, y: 550, w: 1000, h: 100},
+    {x: 1150, y: 400, w: 300, h: 40},
+    {x: 1550, y: 300, w: 250, h: 40},
+    {x: 1900, y: 450, w: 400, h: 40},
+    {x: 2400, y: 350, w: 300, h: 40},
+    {x: 2800, y: 480, w: 400, h: 40},
+    {x: 3350, y: 550, w: 700, h: 100}
+];
+
+const hearts = [
+    {x: 1250, y: 320}, {x: 1650, y: 220}, {x: 2100, y: 370}, 
+    {x: 2550, y: 270}, {x: 3000, y: 400}, {x: 3500, y: 480}
+].map(h => ({...h, collected: false}));
+
+const wolves = [
+    {x: 1200, y: 355, startX: 1200, range: 120, dir: 1},
+    {x: 2000, y: 405, startX: 2000, range: 150, dir: 1},
+    {x: 2900, y: 435, startX: 2900, range: 200, dir: 1}
+];
+
+const keys = {};
+const touch = { left: false, right: false };
+
+window.addEventListener('keydown', e => { 
+    keys[e.code] = true; 
+    if (e.code === 'Space' || e.code === 'ArrowUp') handleJump(); 
+});
+window.addEventListener('keyup', e => keys[e.code] = false);
+
+function bindTouch(id, action) {
+    const btn = document.getElementById(id);
+    btn.addEventListener('touchstart', (e) => { 
+        e.preventDefault(); 
+        if(action === 'jump') handleJump(); else touch[action] = true; 
+    });
+    btn.addEventListener('touchend', (e) => { 
+        e.preventDefault(); 
+        if(action !== 'jump') touch[action] = false; 
+    });
+}
+bindTouch('leftBtn', 'left'); 
+bindTouch('rightBtn', 'right'); 
+bindTouch('jumpBtn', 'jump');
+
+function handleJump() { 
+    if (bear.jumpCount < 2 && gameActive) { 
+        bear.dy = -13; bear.jumpCount++; 
+    } 
+}
+
+function drawHeart(x, y) {
+    const bounce = Math.sin(gameFrame * 0.05) * 5;
+    ctx.fillStyle = "#ff4d6d"; 
+    ctx.beginPath(); 
+    ctx.moveTo(x, y + bounce);
+    ctx.bezierCurveTo(x, y-15+bounce, x-20, y-15+bounce, x-20, y+bounce);
+    ctx.bezierCurveTo(x-20, y+20+bounce, x, y+25+bounce, x, y+35+bounce);
+    ctx.bezierCurveTo(x, y+25+bounce, x+20, y+20+bounce, x+20, y+bounce);
+    ctx.bezierCurveTo(x+20, y-15+bounce, x, y-15+bounce, x, y+bounce); 
+    ctx.fill();
+}
+
+function drawMilkBear(x, y) {
+    ctx.fillStyle = '#b19688'; ctx.beginPath(); ctx.roundRect(x, y, 60, 55, 20); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+10, y+5, 14, 0, 7); ctx.arc(x+50, y+5, 14, 0, 7); ctx.fill();
+    ctx.fillStyle = '#ffcdd2'; ctx.beginPath(); ctx.arc(x+10, y+35, 7, 0, 7); ctx.arc(x+50, y+35, 7, 0, 7); ctx.fill();
+    ctx.fillStyle = '#3e2723'; ctx.beginPath(); ctx.arc(x+20, y+25, 3, 0, 7); ctx.arc(x+40, y+25, 3, 0, 7); ctx.fill();
+}
+
+function drawMochaPanda(x, y) {
+    ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(x, y, 70, 65, 25); ctx.fill();
+    ctx.fillStyle = '#2d2d2d'; ctx.beginPath(); ctx.arc(x+15, y+5, 16, 0, 7); ctx.arc(x+55, y+5, 16, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+25, y+30, 12, 14, 0.2, 0, 7); ctx.ellipse(x+45, y+30, 12, 14, -0.2, 0, 7); ctx.fill();
+    ctx.fillStyle = '#f8bbd0'; ctx.beginPath(); ctx.arc(x+12, y+45, 8, 0, 7); ctx.arc(x+58, y+45, 8, 0, 7); ctx.fill();
+}
+
+function drawWolf(x, y) {
+    ctx.fillStyle = '#78909c'; ctx.beginPath(); ctx.roundRect(x, y, 55, 45, 15); ctx.fill();
+    ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(x+18, y+20, 3, 0, 7); ctx.arc(x+38, y+20, 3, 0, 7); ctx.fill();
+}
+
+function startGame() {
+    document.getElementById('intro-screen').style.display = 'none';
+    canvas.style.display = 'block';
+    if('ontouchstart' in window || window.innerWidth < 1000) mobileControls.style.display = 'flex';
+    canvas.width = window.innerWidth; 
+    canvas.height = window.innerHeight;
+    gameActive = true; 
+    loop();
+}
+
+function loop() {
+    if (!gameActive) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    gameFrame++;
+
+    cameraX = bear.x - canvas.width / 3; 
+    if (cameraX < 0) cameraX = 0;
+
+    ctx.save(); 
+    ctx.translate(-cameraX, 0);
+
+    // Render Platforms
+    ctx.fillStyle = '#a5d6a7'; 
+    platforms.forEach(p => ctx.fillRect(p.x, p.y, p.w, p.h));
+
+    // Render Hearts
+    hearts.forEach(h => { 
+        if (!h.collected) { 
+            drawHeart(h.x, h.y); 
+            if (Math.hypot(bear.x + 30 - h.x, bear.y + 25 - h.y) < 50) h.collected = true; 
+        } 
+    });
+
+    // Render Wolves
+    wolves.forEach(w => {
+        w.x += w.dir * 1.5; 
+        if (Math.abs(w.x - w.startX) > w.range) w.dir *= -1;
+        drawWolf(w.x, w.y); 
+        if (Math.hypot(bear.x + 30 - (w.x + 27), bear.y + 25 - (w.y + 22)) < 45) {
+            gameActive = false;
+            document.getElementById('game-over-screen').style.display = 'flex';
+        }
+    });
+
+    // Controls
+    if (keys['ArrowRight'] || keys['KeyD'] || touch.right) bear.x += bear.speed; 
+    if (keys['ArrowLeft'] || keys['KeyA'] || touch.left) bear.x -= bear.speed;
+    
+    // Physics
+    bear.dy += GRAVITY; bear.y += bear.dy;
+    
+    // Collision
+    platforms.forEach(p => { 
+        if (bear.x + 50 > p.x && bear.x < p.x + p.w && bear.y + 55 > p.y && bear.y + 55 < p.y + p.h + 15 && bear.dy >= 0) { 
+            bear.y = p.y - 55; bear.dy = 0; bear.jumpCount = 0; 
+        } 
+    });
+
+    // Limits
+    if (bear.y > canvas.height) {
+        gameActive = false;
+        document.getElementById('game-over-screen').style.display = 'flex';
+    }
+    if (bear.x > panda.x - 40) {
+        gameActive = false;
+        document.getElementById('victory-screen').style.display = 'flex';
+    }
+
+    drawMochaPanda(panda.x, panda.y); 
+    drawMilkBear(bear.x, bear.y); 
+    ctx.restore(); 
+    requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
